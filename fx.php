@@ -2,56 +2,54 @@
 	define('ROOTDIR', dirname(__FILE__).'/');
 	define('CODEDIR', ROOTDIR.'code/');
 	define('TPLDIR', ROOTDIR.'tpl/');
+	define('PID', getmypid());
+	if (!defined('DEBUG')) define('DEBUG', 1);
 	
-	require ROOTDIR.'common/shared.php';
-	require ROOTDIR.'common/twitter.class.php';
-	require ROOTDIR.'common/phpmailer/class.phpmailer.php';
-	require ROOTDIR.'common/twitteroauth/twitterOAuth.php';
-
-	require CODEDIR.'user.class.php';
-
 	date_default_timezone_set('Europe/London');
 
 	ShowErrors(true);
 	
 	require ROOTDIR.'config.php';
-	if (file_exists(ROOTDIR.'config_dev.php')) require ROOTDIR.'config_dev.php';
 	
-	Twitter::Config($_twitter);
-
-	function & GetDB($db = 'shared')
+	function __autoload($class)
 	{
-		static $_db = array();
-		if (!isset($_db[$db]))
-		{
-			$_db[$db] = mysql_connect(config('db', $db, 'host'), config('db', $db, 'username'), config('db', $db, 'password')) or die('DB gone? <!-- '.mysql_error().' -->');
-			mysql_select_db(config('db', $db, 'database'), $_db[$db]) or die('DB dead? <!-- '.mysql_error().' -->');
-			mysql_query('SET NAMES utf8', $_db[$db]);
-		}
-		return $_db[$db];
+		require CODEDIR.'classes/'.strtolower($class).'.class.php';
 	}
-
+	
+	function GetDB()
+	{
+		static $_db = false;
+		if ($_db === false)
+		{
+			$_db = mysql_connect(__('db', 'host'), __('db', 'username'), __('db', 'password')) or die('DB gone? <!-- '.mysql_error().' -->');
+			mysql_select_db(__('db', 'database'), $_db) or die('DB dead? <!-- '.mysql_error().' -->');
+			mysql_query('SET NAMES utf8', $_db);
+		}
+		return $_db;
+	}
+	
 	/**
 	 * Output the layout header and set up the footer
 	 * @param string $title
 	 * @param string $section
 	 */
-	function Layout($title, $section = '', $data = array())
+	function Layout($title, $section = '', $data = array(), $type = 'www')
 	{
 		// Expire the page immediately
-		header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");    // Date in the past
-		header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+		@header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");    // Date in the past
+		@header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 		// always modified
-		header("Cache-Control: no-store, no-cache, must-revalidate");  // HTTP/1.1
-		header("Cache-Control: post-check=0, pre-check=0", false);
-		header("Pragma: no-cache");                          // HTTP/1.0
+		@header("Cache-Control: no-store, no-cache, must-revalidate");  // HTTP/1.1
+		@header("Cache-Control: post-check=0, pre-check=0", false);
+		@header("Pragma: no-cache");                          // HTTP/1.0
 
 		// Now output the page
 		$GLOBALS['layoutdata'] = $data;
 		$GLOBALS['layoutdata']['title'] = $title;
 		$GLOBALS['layoutdata']['section'] = $section;
+		$GLOBALS['layouttype'] = $type;
 		register_shutdown_function('Footer');
-		TPL('header', $GLOBALS['layoutdata']);
+		TPL($GLOBALS['layouttype'].'/layout/header', $GLOBALS['layoutdata']);
 	}
 
 	/**
@@ -59,7 +57,7 @@
 	 */
 	function Footer()
 	{
-		TPL('footer', $GLOBALS['layoutdata']);
+		TPL($GLOBALS['layouttype'].'/layout/footer', $GLOBALS['layoutdata']);
 	}
 
 	/**
@@ -166,10 +164,6 @@
 		{
 			$url = 'http://'.$_SERVER['HTTP_HOST'].$url;
 		}
-		elseif (DEV)
-		{
-			$url = str_replace('.freeads.net', '.'.$GLOBALS['_SITE'].'.net', $url);
-		}
 		
 		if (headers_sent())
 		{
@@ -196,4 +190,116 @@
 			print '<script type="text/javascript"> location.href = "'.$url.'"; </script>';
 			exit;
 		}
+	}
+
+	// CACHE STUFF
+
+	define('KEY_SEARCH_LIMITED', 'search_limited');
+	define('KEY_API_LIMITED', 'api_limited');
+
+	function cache($op, $key, $val = '', $expiry = 604800)
+	{
+		static $memcache = false;
+		if ($memcache === false)
+		{
+			$memcache = new Memcache();
+			$memcache->connect('localhost', 11211) or die('Fatal error - could not connect to Memcache');
+		}
+		
+		$retval = true;
+		
+		// Prefix the key to avoid collisions with other apps
+		$key = 'twitapps_'.$key;
+		
+		switch ($op)
+		{
+			case 'set':
+				$memcache->set($key, $val, false, $expiry) or die('Fatal error - could not store '.htmlentities($key).' in Memcache');
+				break;
+				
+			case 'get':
+				$retval = $memcache->get($key);
+				break;
+				
+			case 'inc':
+				$retval = $memcache->increment($key);
+				break;
+				
+			case 'add':
+				$retval = $memcache->add($key, $val, false, $expiry);
+				break;
+		}
+		
+		return $retval;
+	}
+
+	function HTMLifyTweet($in, $twitapps_search_for_users = false, $newwin_links = false, $newwin_users = false)
+	{
+		$newwin_links = ($newwin_links ? ' target="_blank"' : '');
+		$newwin_users = ($newwin_users ? ' target="_blank"' : '');
+		$out = nl2br($in);
+		$out = preg_replace('|(https?://[^\s\(\)\[\]\<\>]+)|i', '<a href="\\1"'.$newwin_links.'>\\1</a>', $out);
+		$out = preg_replace('|@([a-z0-9_]+)|i', ($twitapps_search_for_users ? '@<a href="http://search.twitapps.com/~\\1"'.$newwin_users.'>\\1</a>' : '@<a href="http://twitter.com/\\1"'.$newwin_users.'>\\1</a>'), $out);
+		return $out;
+	}
+
+	function InDays($stamp)
+	{
+		$retval = date('F jS, Y @ h:ia', $stamp);
+		$diff = time() - $stamp;
+		
+		if ($diff <= 50)
+			$retval = 'less than a minute ago';
+		elseif ($diff < 70)
+			$retval = 'about a minute ago';
+		elseif ($diff < 180)
+			$retval = 'a few minutes ago';
+		elseif ($diff < 290)
+			$retval = 'less than 5 minutes ago';
+		elseif ($diff < 3300)
+			$retval = 'about '.floor($diff / 60).' minutes ago';
+		elseif ($diff < 3900)
+			$retval = 'about an hour ago';
+		elseif ($diff < 82800)
+			$retval = 'about '.ceil($diff / 3600).' hours ago';
+		else
+		{
+			$days = floor($diff / 86400);
+			if ($days < 2)
+				$retval = 'yesterday';
+			else
+				$retval = $days.' days ago';
+		}
+		
+		return $retval;
+	}
+	
+	// DEBUGGING STUFF
+	
+	function Debug($level, $txt)
+	{
+		static $log = false;
+		if (DEBUG >= $level)
+		{
+			if ($log === false) $log = Log::_();
+			$log->Write($txt);
+		}
+	}
+	
+	function Debug_StartBlock($level, $prefix, $message = false)
+	{
+		$log = Log::_();
+		if (DEBUG >= $level and $message !== false)
+			$log->Write($message);
+		$log->Indent();
+		$log->SetPrefix($prefix);
+	}
+
+	function Debug_EndBlock($level, $message = false)
+	{
+		$log = Log::_();
+		$log->Unindent();
+		$log->SetPrefix(false);
+		if (DEBUG >= $level and $message !== false)
+			$log->Write($message);
 	}

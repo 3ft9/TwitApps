@@ -2,7 +2,7 @@
 	require dirname(__FILE__).'/../../../fx.php';
 
 	// Are we logged in?
-	if (strlen(User::cGet('id')) == 0 or strlen(User::cGet('oat')) == 0 or strlen(User::cGet('oats')) == 0)
+	if (!User::IsLoggedIn())
 	{
 		Redirect('/account/signin');
 	}
@@ -65,7 +65,7 @@
 					break;
 			}
 			
-			$result = User::UpdateService('follows', $data['user'], $follows);
+			$result = User::UpdateService('follows', $data['user']['id'], $follows);
 			
 			if ($result === true)
 			{
@@ -78,17 +78,17 @@
 		}
 	}
 
-	$data['follows'] = User::GetServices($data['user'], 'follows');
+	$data['follows'] = User::GetServices($data['user']['id'], 'follows');
 
 	Layout('Follows', 'account');
 	
 	if ($data['follows'] === false)
 	{
-		TPL('account/follows/install', $data);
+		TPL('www/account/follows/install', $data);
 	}
 	else
 	{
-		TPL('account/follows/index', $data);
+		TPL('www/account/follows/index', $data);
 	}
 
 //	echo '<pre>';

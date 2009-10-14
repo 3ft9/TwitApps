@@ -9,17 +9,7 @@
 	
 	$data = array('user' => User::Get());
 	
-	$follows = array(
-		'status' => 'active',
-		'email' => !empty($_POST['email']) ? trim($_POST['email']) : '',
-		'frequency' => 'daily',
-		'hour' => date('H'),
-		'when' => '',
-		'post_url' => '',
-		'post_format' => '',
-	);
-	
-	$result = User::InstallService('follows', $data['user'], $follows);
+	$result = Follows::Install($data['user']['id'], !empty($_POST['email']) ? trim($_POST['email']) : '');
 
 	if ($result === true)
 	{
@@ -29,4 +19,4 @@
 	$data['message'] = 'Installation failed; '.$result;
 	
 	Layout('Follows', 'account');
-	TPL('account/follows/install', $data);
+	TPL('www/account/follows/install', $data);

@@ -26,7 +26,7 @@
 			$replies['replies_only'] = (empty($_POST['replies_only']) ? 0 : 1);
 			$replies['ignore_self'] = (empty($_POST['ignore_self']) ? 0 : 1);
 			
-			$result = User::UpdateService('replies', $data['user'], $replies);
+			$result = User::UpdateService('replies', $data['user']['id'], $replies);
 			
 			if ($result === true)
 			{
@@ -39,19 +39,19 @@
 		}
 	}
 
-	$data['replies'] = User::GetServices($data['user'], 'replies');
-	
+	$data['replies'] = User::GetServices($data['user']['id'], 'replies');
+
 	Layout('Replies', 'account');
 
 	if ($data['replies'] === false)
 	{
-		TPL('account/replies/install', $data);
+		TPL('www/account/replies/install', $data);
 	}
 	else
 	{
 		$data['replies']['min_interval'] = $data['replies']['min_interval'] / 60;
 
-		TPL('account/replies/index', $data);
+		TPL('www/account/replies/index', $data);
 	}
 
 //	echo '<pre>';

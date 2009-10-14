@@ -1,23 +1,16 @@
 <?php
+	$_service = array(
+		'list' => array(
+			'replies',
+			'follows',
+		),
+	);
+	
 	$_db = array(
-		'shared' => array(
-			'username' => 'twitapps_shared',
-			'password' => 'password_one',
-			'database' => 'twitapps_shared',
-			'host' => 'localhost',
-		),
-		'replies' => array(
-			'username' => 'ta_replies',
-			'password' => 'password_two',
-			'database' => 'twitapps_replies',
-			'host' => 'localhost',
-		),
-		'follows' => array(
-			'username' => 'ta_follows',
-			'password' => 'password_three',
-			'database' => 'twitapps_follows',
-			'host' => 'localhost',
-		),
+		'username' => 'twitapps_user',
+		'password' => 'password_one',
+		'database' => 'twitapps',
+		'host' => 'localhost',
 	);
 
 	$_twitter = array(
@@ -26,12 +19,12 @@
 			'password' => 'password_one',
 			'source' => 'twitapps',
 		),
-		'ta_replies' => array(
+		'replies' => array(
 			'username' => 'ta_replies',
 			'password' => 'password_two',
 			'source' => 'twitapps',
 		),
-		'ta_follows' => array(
+		'follows' => array(
 			'username' => 'ta_follows',
 			'password' => 'password_three',
 			'source' => 'twitapps',
@@ -40,18 +33,18 @@
 	
 	$_oauth = array(
 		'consumer_key' => '', // Get this from Twitter
-		'consumer_secret' => '', // Get this from Twitter too
+		'consumer_secret' => '', // Get this from Twitter
 		'url_request_token' => 'http://twitter.com/oauth/request_token',
 		'url_access_token' => 'http://twitter.com/oauth/access_token',
 		'url_authorize' => 'http://twitter.com/oauth/authorize',
 	);
 	
-	function config($type, $account = 'twitapps', $key = false)
+	function __($type, $k1 = 'twitapps', $k2 = false)
 	{
-		if ($key !== false and isset($GLOBALS['_'.$type][$account][$key]))
-			return $GLOBALS['_'.$type][$account][$key];
-		elseif ($key === false and isset($GLOBALS['_'.$type][$account]))
-			return $GLOBALS['_'.$type][$account];
+		if ($k2 !== false and isset($GLOBALS['_'.$type][$k1][$k2]))
+			return $GLOBALS['_'.$type][$k1][$k2];
+		elseif ($k2 === false and isset($GLOBALS['_'.$type][$k1]))
+			return $GLOBALS['_'.$type][$k1];
 		else
 			return null;
 	}
