@@ -1,0 +1,13 @@
+This is the code to the entire TwitApps.com service including Replies and Follows.
+
+This code is released into the public domain without any warranty or claim of fitness for purpose either express or implied.
+
+The first version is in the v1 branch and master is up to date with this. That's the version that was live when the service was shut down. The v2 branch contains the as yet incomplete update. The Replies service in v2 is pretty much fully working but the Follows service needs further testing and bug-fixing.
+
+Do with it what you will but if you find it useful I'd appreciate you dropping me a line letting me know what you're doing with it.
+
+If you have any questions please feel free to ask; I'll help if I can but don't necessarily expect a speedy response.
+
+Thanks.
+
+-Stuart

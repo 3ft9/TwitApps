@@ -1,0 +1,39 @@
+a, a:link, a:visited { color: blue; text-decoration: none; }
+a:hover { text-decoration: underline; }
+strong { font-weight: bold; }
+em { font-style: italic; }
+abbr, acronym { border-bottom: 1px dotted #000; cursor:help; }
+blockquote,ul,ol,dl { margin: 1em; }
+ol,ul,dl { margin-left: 2em; }
+ol li { list-style: decimal outside; }
+ul li { list-style: disc outside; }
+dl dd { margin-left: 1em; } 
+.cb { clear: both; }
+
+.left { text-align: left; }
+.centre { text-align: center; }
+.right { text-align: right; }
+
+#mydoc{ margin: auto; text-align: left; width: 46.15em; *width: 45.00em; min-width: 600px; font-family: georgia; padding: 1.5em;}
+#h { padding-bottom: 0.5em; margin-bottom: 0.5em; border-bottom: 2px solid black; font-family: Trebuchet MS, Helvetica, sans-serif; font-size: 138.5%; }
+#h #sitename { font-weight: bold; }
+#h #sitename a, #h #sitename a:link, #h #sitename a:visited { color: black; }
+#h #menu { float: right; }
+#h #menu a { margin-left: 0.5em; padding-left: 0.5em; border-left: 1px solid #777; }
+#h #menu a.current { color: green; }
+#h #menu a.nb { border-left: none; }
+#f { padding-top: 0.5em; margin-top: 0.5em; border-top: 2px solid black; font-family: Trebuchet MS, Helvetica, sans-serif; font-size: 0.9em; text-align:center; }
+#b { font-size: 123.1%; line-height: 1.5em; }
+#b h1, #b h2, #b h3, #b h4 { font-weight: bold; }
+#b h1 { font-size: 138.5%; }
+#b h2, #b h3, #b h4 { font-family: Trebuchet MS, Helvetica, sans-serif; margin-top: 0.75em; }
+#b h2 { font-size: 123.1%; }
+#b h3 { font-size: 116%; }
+#b h4 { font-size: 108%; }
+#b p { margin-top: 0.75em; margin-bottom: 0.75em; }
+#b div.info { float: right; text-align: right; font-size: 77%; color: #444; border: 1px dotted #bebebe; padding: 0em 0.5em; line-height: 1.1em; }
+
+table.dt { border: 1px solid #999; border-collapse: collapse; }
+table.dt th, table.dt td { padding: 0.5em 0.75em; border: 1px solid #999; }
+table.dt th { padding-top: 0; padding-bottom: 0; font-weight: bold; text-align: center; background-color: #999; }
+table.dt td.red { color: red; }
