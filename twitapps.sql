@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: twitapps
 -- ------------------------------------------------------
--- Server version	5.0.45
+-- Server version	5.0.51a-24+lenny5
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -20,6 +20,8 @@
 --
 
 DROP TABLE IF EXISTS `audit_log`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE `audit_log` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `service` varchar(20) NOT NULL,
@@ -34,13 +36,16 @@ CREATE TABLE `audit_log` (
   KEY `serviceandtype` (`service`,`type`),
   KEY `userandtype` (`user_id`,`type`),
   KEY `serviceuserandtype` (`service`,`user_id`,`type`)
-) ENGINE=MyISAM AUTO_INCREMENT=13541 DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+) ENGINE=MyISAM AUTO_INCREMENT=22153 DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `follows_followers`
 --
 
 DROP TABLE IF EXISTS `follows_followers`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE `follows_followers` (
   `id` int(20) unsigned NOT NULL auto_increment,
   `user_id` int(20) unsigned NOT NULL,
@@ -55,13 +60,16 @@ CREATE TABLE `follows_followers` (
   KEY `user_stopped` (`user_id`,`stopped_at`),
   KEY `user_started_stopped` (`user_id`,`started_at`,`stopped_at`),
   KEY `user_last_seen` (`user_id`,`last_seen_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=82278 DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=82989 DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `follows_users`
 --
 
 DROP TABLE IF EXISTS `follows_users`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE `follows_users` (
   `id` int(20) NOT NULL,
   `email` varchar(250) NOT NULL,
@@ -80,12 +88,15 @@ CREATE TABLE `follows_users` (
   `updated_at` int(10) unsigned NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `replies_queue`
 --
 
 DROP TABLE IF EXISTS `replies_queue`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE `replies_queue` (
   `id` int(20) unsigned NOT NULL auto_increment,
   `recipient_id` int(20) unsigned NOT NULL,
@@ -98,13 +109,16 @@ CREATE TABLE `replies_queue` (
   UNIQUE KEY `tweet_to_user` (`recipient_id`,`tweet_id`),
   KEY `recipient` (`recipient_id`),
   KEY `recipient_due` (`recipient_id`,`emailed_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=11659 DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=11660 DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `replies_users`
 --
 
 DROP TABLE IF EXISTS `replies_users`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE `replies_users` (
   `id` int(20) NOT NULL,
   `email` varchar(250) NOT NULL,
@@ -124,12 +138,15 @@ CREATE TABLE `replies_users` (
   KEY `processor_pid` (`processor_pid`),
   KEY `get_next` (`status`,`last_run_at`,`last_email_at`,`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `users`
 --
 
 DROP TABLE IF EXISTS `users`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
 CREATE TABLE `users` (
   `id` int(20) unsigned NOT NULL,
   `screen_name` varchar(20) NOT NULL,
@@ -160,6 +177,7 @@ CREATE TABLE `users` (
   `oauth_token_secret` varchar(100) default NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+SET character_set_client = @saved_cs_client;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -170,4 +188,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2009-10-14 18:58:11
+-- Dump completed on 2011-07-03 22:29:11
