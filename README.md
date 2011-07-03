@@ -1,4 +1,5 @@
-= TwitApps
+TwitApps
+========
 
 This is the code to the entire TwitApps.com service.
 
