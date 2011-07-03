@@ -10,8 +10,6 @@
 			<a href="/donations">donations</a>
 			<strong>&middot;</strong>
 			v2.0beta
-			<!-- br /><br />
-			<iframe src="http://www.google.com/talk/service/badge/Show?tk=z01q6amlqed3osb9rrt3s3qu8gnn904nritqil6uhu7a7mq692btj9fr92c0hkuvkbk6qr8rqm7q9uqam1v7g6cmg1k6uiouq6g106jii7lihm1t29m6dlbqu889aqpkgfhs69t0edsu9ms26odgo512sjhdflk8a804blqi1lojk8lesd1d6qt0k3ah0r7b7go&amp;w=300&amp;h=18" frameborder="0" allowtransparency="true" width="300" height="18"></iframe -->
 		</div>
 	</div>
 	<script type="text/javascript">
@@ -31,5 +29,6 @@
 		tab_options.color = "#222"; // hex (#FF0000) or color (red)
 		GSFN.feedback('http://getsatisfaction.com/twitapps/feedback/topics/new?display=overlay&amp;style=idea', tab_options);
 	</script>
+	<script language="javascript" src="http://uk1.adducer.net/adcs.js"></script>
 	</body>
 </html>

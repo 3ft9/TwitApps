@@ -15,6 +15,6 @@
 				<a href="/follows/" class="<?php if ($section == 'follows') { echo 'current'; } ?>">follows</a>
 				<a href="/account/" class="<?php if ($section == 'account') { echo 'current'; } ?>">account</a>
 			</div>
-			<div id="sitename"><a href="http://<?php echo __('domains', 'www'); ?>/"><span style="color:#51cafb;">Twit</span>Apps</a></div>
+			<div id="sitename"><a href="http://<?php echo __('domains', 'www'); ?>/"><span style="color:#51cafb;">Twit</span>Apps<span style="color:#f99;">Beta</span></a></div>
 		</div>
 		<div id="b">
