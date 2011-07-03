@@ -1,7 +1,7 @@
 <div style="float: right; padding-top: 0.25em; padding-left: 0.5em;">
 	<script type="text/javascript">
 		tweetmeme_url = 'http://twitapps.com/follows';
-		tweetmeme_source = 'twitapps';  
+		tweetmeme_source = 'twitapps';
 	</script>
 	<script type="text/javascript" src="http://tweetmeme.com/i/scripts/button.js"></script>
 </div>
@@ -24,7 +24,7 @@
 
 <p>We'll keep track of your followers and send you a periodic email summarising the changes since your last email.</p>
 
-<div style="border: 2px solid #444; width: 540px; margin-left:auto; margin-right:auto;"><div><img src="http://static.twitapps.com/follows_email.gif" width="536" height="407" border="0" alt="Sample Email" /></div><div class="centre" style="background-color:#444;color:#fff;">Sample email</div></div>
+<div style="border: 2px solid #444; width: 540px; margin-left:auto; margin-right:auto;"><div><img src="http://<?php echo __('domains', 'static'); ?>/follows_email.gif" width="536" height="407" border="0" alt="Sample Email" /></div><div class="centre" style="background-color:#444;color:#fff;">Sample email</div></div>
 
 <p>The following configuration options are available...</p>
 

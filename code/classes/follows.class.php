@@ -11,7 +11,7 @@
 		const TABLE_FOLLOWERS = 'follows_followers';
 
 		// (UN)INSTALLATION FUNCTIONS
-		
+
 		static function Install($user_id, $email, $frequency = false, $hour = false, $when = false, $post_url = false, $post_format = false)
 		{
 			if ($frequency === false) $frequency = 'daily';
@@ -21,7 +21,7 @@
 			if ($post_format === false) $post_format = '';
 
 			$db = GetDB();
-			
+
 			$sql = 'insert into `'.self::TABLE_USERS.'` set ';
 			$sql.= '`id` = "'.mysql_real_escape_string($user_id, $db).'", ';
 			$sql.= '`status` = "active", ';
@@ -63,7 +63,7 @@
 			$user = self::GetNextUser();
 
 			$retval = false;
-			
+
 			if ($user === false)
 			{
 				Debug(9, 'No user to process');
@@ -72,7 +72,7 @@
 			{
 				Debug(5, 'NextUser == '.$user['id']);
 				$u = User::Get($user['id']);
-				
+
 				if ($u === false)
 				{
 					AuditLog::Write('follows', $user['id'], 'error', 'Failed to load user details');
@@ -107,15 +107,15 @@
 				$user['last_run_at'] = time();
 				self::UpdateUser($user['id'], $user);
 				self::ReleaseUser();
-				
+
 				$retval = true;
 			}
-			
+
 			Debug_EndBlock(9, 'Follows::Run completed '.($retval ? 'successfully' : 'unsuccessfully'));
-			
+
 			return $retval;
 		}
-		
+
 		/**
 		 * Send an email to the next user.
 		 * @return bool False if there are no users due, otherwise true.
@@ -123,11 +123,11 @@
 		static public function SendEmail(&$user, &$u)
 		{
 			$retval = false;
-			
+
 			$current_count = self::GetCount($user['id']);
 			$follows = self::GetChanges($user['id'], $user['last_email_at']);
 			Debug(9, 'Got '.count($follows['new']).' new followers and lost '.count($follows['old']));
-			
+
 			if (count($follows['new']) == 0 and count($follows['old']) == 0)
 			{
 				$retval = true;
@@ -135,7 +135,7 @@
 			else
 			{
 				$delta = count($follows['new']) - count($follows['old']);
-				
+
 				if (count($follows) == 0)
 				{
 					Debug(9, 'Nothing waiting to be emailed for '.$user['id']);
@@ -143,10 +143,10 @@
 				else
 				{
 					$users = array();
-					
+
 					// Create TwitterOAuth with app key/secret and user access key/secret
 					$twitter = new TwitterOAuth(__('oauth', 'consumer_key'), __('oauth', 'consumer_secret'), $u['oauth_token'], $u['oauth_token_secret']);
-					
+
 					foreach ($follows as $arr)
 					{
 						foreach (array_keys($arr) as $key)
@@ -158,7 +158,7 @@
 							}
 						}
 					}
-	
+
 					$data = array(
 						'u' => $u,
 						'user' => $user,
@@ -166,39 +166,41 @@
 						'users' => $users,
 						'subject' => 'Follower changes on Twitter for '.$u['screen_name'].' ('.($delta >= 0 ? '+' : '').$delta.($current_count ? ', now '.$current_count : '').')',
 					);
-					
+
 					$mail = new PHPMailer();
-					$mail->SetLanguage('en', CODEDIR.'phpmailer/language/');
-					
+
 					$mail->IsSMTP();          // set mailer to use SMTP
-					$mail->Host = 'ssl://smtp.gmail.com'; // specify main and backup server
-					$mail->SMTPAuth = true;
-					$mail->Port = 465;        //  Used instead of 587 when only POP mail is selected
-	
-					$mail->Username = 'help@twitapps.com';  // SMTP username, you could use your google apps address too.
-					$mail->Password = 'my_gmail_password'; // SMTP password
-	
+					$mail->Host = __('smtp', 'host');
+					$mail->SMTPAuth = __('smtp', 'auth');
+					$mail->Port = __('smtp', 'port');
+
+					if (__('smtp', 'auth'))
+					{
+						$mail->Username = __('smtp', 'email');
+						$mail->Password = __('smtp', 'pass');
+					}
+
 					$mail->FromName = 'TwitApps';
 					$mail->From = 'noreply@twitapps.com';
 					$mail->Sender = 'noreply@twitapps.com';
 					$mail->AddReplyTo('noreply@twitapps.com', 'TwitApps');
-	
+
 					$mail->Subject = $data['subject'];
 
 					$mail->Body = TPL('email/follows.html', $data, true);
 					$mail->AltBody = TPL('email/follows.txt', $data, true);
 					$mail->IsHTML(true);
-					
+
 					$mail->WordWrap = 79;
-					
+
 					$mail->AddAddress($user['email'], $u['screen_name']);
-					//$mail->AddBCC('twitapps@stut.net');
-					
+					$mail->AddBCC('twitapps@stut.net');
+
 					if ($mail->Send())
 					{
 						AuditLog::Write('follows', $user['id'], 'notice', 'Sent '.count($follows).' by email to "'.$user['email'].'"');
 						$user['last_email_at'] = time();
-						
+
 						$retval = true;
 					}
 					else
@@ -211,15 +213,15 @@
 
 			return $retval;
 		}
-		
+
 		// USER FUNCTIONS
-		
+
 		static private function GetNextUser()
 		{
 			$retval = false;
 
 			$db = GetDB();
-			
+
 			$pid = mysql_real_escape_string((defined('PID') ? PID : getmypid()), $db);
 
 			// Get any users not run within the last 5 minutes ordered by last run date then last emailed date
@@ -236,10 +238,10 @@
 				}
 				mysql_free_result($query);
 			}
-			
+
 			return $retval;
 		}
-		
+
 		static private function UpdateUser($id, $data)
 		{
 			$db = GetDB();
@@ -256,15 +258,15 @@
 					$fields[] = '`'.$var.'` = "'.mysql_real_escape_string($val, $db).'"';
 				}
 			}
-			
+
 			$sql = 'update `'.self::TABLE_USERS.'` set '.implode(', ', $fields).' where `id` = "'.mysql_real_escape_string($id, $db).'"';
-			
+
 			$retval = @mysql_query($sql, $db);
 			if (!$retval) die('Something bad happened. Sorry. <!-- '.mysql_error($db).' -->');
-			
+
 			return $retval;
 		}
-		
+
 		static public function ReleaseUser()
 		{
 			$db = GetDB();
@@ -272,9 +274,9 @@
 			$sql = 'update `'.self::TABLE_USERS.'` set `processor_pid` = 0 where `processor_pid` = "'.$pid.'"';
 			mysql_query($sql, $db);
 		}
-		
+
 		// FOLLOWER FUNCTIONS
-		
+
 		static private function UpdateFollowers($user, $u)
 		{
 			$now = time();
@@ -283,10 +285,10 @@
 			$twitter = new TwitterOAuth(__('oauth', 'consumer_key'), __('oauth', 'consumer_secret'), $u['oauth_token'], $u['oauth_token_secret']);
 
 			$count = -1;
-			$page = 1;
-			while ($count != 0)
+			$cursor = -1;
+			while ($count != 0 and $cursor != '0')
 			{
-				$followers_json = $twitter->OAuthRequest('https://twitter.com/followers/ids.json', array('page' => $page), 'GET');
+				$followers_json = $twitter->OAuthRequest('http://api.twitter.com/1/followers/ids.json?', array('cursor' => $cursor), 'GET');
 				if ($twitter->lastStatusCode() != 200)
 				{
 					switch ($twitter->lastStatusCode())
@@ -313,16 +315,16 @@
 				}
 				else
 				{
-					$followers = @json_decode($followers_json);
-					if (is_array($followers))
+					$followers = @json_decode($followers_json, true);
+					if (is_array($followers['ids']))
 					{
-						$count = count($followers);
+						$count = count($followers['ids']);
 						if ($count > 0)
 						{
 							Debug(5, 'Got '.$count.' followers');
 							AuditLog::Write('follows', $user['id'], 'notice', 'First run, got '.$count.' followers');
-							
-							$numadded = self::AddFollowers($user['id'], $followers, $now);
+
+							$numadded = self::AddFollowers($user['id'], $followers['ids'], $now);
 							if ($numadded != $count)
 							{
 								Debug(5, 'Added '.$numadded.' followers when we got '.$count);
@@ -334,16 +336,16 @@
 					{
 						Debug(5, 'Failed to get page '.$page);
 						Debug(9, 'Follows[JSON]: '.$followers_json);
-						Debug(9, 'Follows: '.print_r($followers, true));
+						Debug(9, 'Follows: '.print_r($followers['ids'], true));
 						AuditLog::Write('follows', $user['id'], 'error', 'Failed to get followers page '.$page.': '.$followers_json);
 						$count = 0;
 					}
-					
-					// Increment the page number
-					$page++;
+
+					// Set the cursor for the next page
+					$cursor = $followers['next_cursor_str'];
 				}
 			}
-			
+
 			// Now mark any not updated as having stopped following
 			self::MarkAsStoppedFollowing($user['id'], $now);
 		}
@@ -353,19 +355,19 @@
 			$retval = true;
 
 			$db = GetDB();
-			
+
 			if ($now === false) $now = time();
-			
+
 			// Store the tweet in the queue for this user
 			debug(9, 'AddFollower: Adding/updating '.count($follower_ids).' users as followers of '.$user_id.'...');
-			
+
 			$user_id_escaped = mysql_real_escape_string($user_id, $db);
 
 			$values = array();
 			foreach ($follower_ids as $id)
 			{
 				$values[] = '("'.$user_id_escaped.'", "'.mysql_real_escape_string($id).'", "'.$now.'", 0, "'.$now.'")';
-				
+
 				if (count($values) >= 50)
 				{
 					// Got 50, run the query
@@ -374,19 +376,19 @@
 					if ($retval === false) break;
 				}
 			}
-			
+
 			if ($retval !== false and count($values) > 0)
 			{
 				$retval = self::RunAddFollowersQuery($values, $now, $db);
 			}
-			
+
 			return $retval;
 		}
-		
+
 		static private function RunAddFollowersQuery($values, $now, $db = false)
 		{
 			$retval = true;
-			
+
 			if ($db === false) $db = GetDB();
 
 			$sql = 'insert into `'.self::TABLE_FOLLOWERS.'` (user_id, follower_id, started_at, stopped_at, last_seen_at) VALUES ';
@@ -400,10 +402,10 @@
 				debug(1, 'RunAddFollowersQuery: '.$sql);
 				$retval = false;
 			}
-			
+
 			return $retval;
 		}
-		
+
 		static private function MarkAsStoppedFollowing($user_id, $now)
 		{
 			$retval = true;
@@ -418,7 +420,7 @@
 			}
 			return $retval;
 		}
-		
+
 		static private function CalcNextEmailAt($frequency, $hour, $when)
 		{
 			$retval = 0;
@@ -431,7 +433,7 @@
 				case 'weekly':
 					$retval = strtotime(date('Y-m-d '.$hour.':00:00', strtotime('next '.$when)));
 					break;
-					
+
 				case 'daily':
 				default:
 					$retval = strtotime(date('Y-m-d '.$hour.':00:00', time()+86400));
@@ -439,7 +441,7 @@
 			}
 			return $retval;
 		}
-		
+
 		static private function GetChanges($user_id, $since)
 		{
 			$retval = false;
@@ -460,7 +462,7 @@
 			}
 			return $retval;
 		}
-		
+
 		static private function GetCount($user_id)
 		{
 			$retval = false;
@@ -474,7 +476,7 @@
 			}
 			return $retval;
 		}
-		
+
 		static private function MarkAsEmailed($user_id, $ids)
 		{
 			$db = GetDB();

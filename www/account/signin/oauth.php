@@ -39,16 +39,6 @@
 		$user['oauth_token'] = User::cGet('oat');
 		$user['oauth_token_secret'] = User::cGet('oats');
 		
-		// Get the user record from the local DB
-		$existinguser = User::GetByScreenName($user['screen_name']);
-		
-		// Decide whether we need to try migration
-		$migrate = false;
-		if ($existinguser === false or empty($existinguser['oauth_token']) or empty($existinguser['oauth_token_secret']))
-		{
-			$migrate = true;
-		}
-		
 		// Now save the user in the DB
 		User::Update($user, true);
 
@@ -59,7 +49,7 @@
 		ob_end_clean();
 
 		// Take them to the account or migration page
-		Redirect($migrate ? '/account/signin/migrate' : '/account/');
+		Redirect('/account/');
 	}
 	else
 	{

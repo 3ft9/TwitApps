@@ -1,12 +1,12 @@
 <div style="float: right; padding-top: 0.25em; padding-left: 0.5em;">
 	<script type="text/javascript">
 		tweetmeme_url = 'http://twitapps.com/replies';
-		tweetmeme_source = 'twitapps';  
+		tweetmeme_source = 'twitapps';
 	</script>
 	<script type="text/javascript" src="http://tweetmeme.com/i/scripts/button.js"></script>
 </div>
 
-<h1>Replies [<span style="color:red;font-size:0.8em;font-weight:normal;">BETA</span>]</h1>
+<h1>Replies</h1>
 
 <p>
 	Get tweets containing @your_username in your inbox without revealing your Twitter password.
@@ -23,7 +23,7 @@
 
 <p>We continuously monitor the public feed on Twitter and keep track of any tweets that mention you. We then stick them in an email roughly once an hour, or more often if you get a lot of replies. You can change these options using the commands described below.</p>
 
-<div style="border: 2px solid #444; width: 525px; margin-left:auto; margin-right:auto;"><div><img src="http://static.twitapps.com/replies_email.gif" width="521" height="201" border="0" alt="Sample Email" /></div><div class="centre" style="background-color:#444;color:#fff;">Sample email</div></div>
+<div style="border: 2px solid #444; width: 525px; margin-left:auto; margin-right:auto;"><div><img src="http://<?php echo __('domains', 'static'); ?>/replies_email.gif" width="521" height="201" border="0" alt="Sample Email" /></div><div class="centre" style="background-color:#444;color:#fff;">Sample email</div></div>
 
 <p>The following configuration options are available...</p>
 

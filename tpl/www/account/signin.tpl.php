@@ -3,10 +3,7 @@
 	Click on the button below to go to the Twitter website to login and authorise us to access your account.
 </p>
 <p style="text-align:center;">
-	<a href="/account/signin/oauth"><img src="http://static.twitapps.com/connect.gif" alt="Sign in with Twitter" /></a>
-</p>
-<p>
-	Please note that this sign in functionality is provided by Twitter and is currently in Beta. If it's not working please check the <a href="http://status.twitter.com/">Twitter status page</a> before contacting us.
+	<a href="/account/signin/oauth"><img src="http://<?php echo __('domains', 'static'); ?>/connect.gif" alt="Sign in with Twitter" /></a>
 </p>
 <h2>Our Promise to You</h2>
 <p>

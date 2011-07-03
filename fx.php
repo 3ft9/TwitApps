@@ -10,6 +10,10 @@
 	ShowErrors(true);
 	
 	require ROOTDIR.'config.php';
+	if (file_exists(ROOTDIR.'config_dev.php'))
+	{
+		require ROOTDIR.'config_dev.php';
+	}
 	
 	function __autoload($class)
 	{
